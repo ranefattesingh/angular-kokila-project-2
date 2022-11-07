@@ -18,14 +18,7 @@ export class TableRowComponent {
   AttributeNames = new FormArray([]);
   AttributeValues = new FormArray([]);
   conditionForm = new FormGroup({
-    conditions: new FormArray([
-      new FormControl({
-        LogicalOperators: new FormArray([]),
-        ArithmeticOperators: new FormArray([]),
-        AttributeNames: new FormArray([]),
-        AttributeValues: new FormArray([]),
-      }),
-    ]),
+    conditions: new FormArray([]),
   });
 
   public ngOnInit() {
@@ -81,7 +74,7 @@ export class TableRowComponent {
       ID: 0,
       LogicalOperators: this.LogicalOperators,
       ArithmeticOperators: this.ArithmeticOperators,
-      AttributeNames: this.AttributeValues,
+      AttributeNames: this.AttributeNames,
       AttributeValues: this.AttributeValues,
     });
   }

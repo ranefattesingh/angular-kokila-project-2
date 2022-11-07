@@ -5,51 +5,62 @@
   </div>
   <table>
     <tbody>
-      <ng-container *ngFor="let condition of Conditions">
+      <ng-container
+        *ngFor="let condition of getConditions().controls; let i = index"
+      >
         <tr>
-          <!-- Condition And/Or column -->
           <td>
             <select>
               <option
-                *ngFor="let logicalOperator of condition.LogicalOperators"
+                *ngFor="
+                  let logicalOperator of condition.value.LogicalOperators
+                    .controls
+                "
               >
-                {{ logicalOperator.LogicalOperatorValue }}
+                {{ logicalOperator.value.LogicalOperatorValue }}
               </option>
             </select>
           </td>
 
-          <!-- Data Item -->
-          <td>
-            <select>
-              <option *ngFor="let attributeName of condition.AttributeNames">
-                {{ attributeName.AttributeNameValue }}
-              </option>
-            </select>
-          </td>
-
-          <!-- Operators -->
           <td>
             <select>
               <option
-                *ngFor="let arithmeticOperator of condition.ArithmeticOperators"
+                *ngFor="
+                  let attributeName of condition.value.AttributeNames.controls
+                "
               >
-                {{ arithmeticOperator.ArithmeticOperatorValue }}
+                {{ attributeName.value.AttributeNameValue }}
               </option>
             </select>
           </td>
 
-          <!-- Data Values -->
           <td>
             <select>
-              <option *ngFor="let attributeValue of condition.AttributeValues">
-                {{ attributeValue.AttributeValueValue }}
+              <option
+                *ngFor="
+                  let arithmeticOperator of condition.value.ArithmeticOperators
+                    .controls
+                "
+              >
+                {{ arithmeticOperator.value.ArithmeticOperatorValue }}
               </option>
             </select>
           </td>
 
-          <!-- Delete button -->
           <td>
-            <button (click)="onDeleteConditionClick(condition)">Delete</button>
+            <select>
+              <option
+                *ngFor="
+                  let attributeValue of condition.value.AttributeValues.controls
+                "
+              >
+                {{ attributeValue.value.AttributeValueValue }}
+              </option>
+            </select>
+          </td>
+
+          <td>
+            <button (click)="onDeleteConditionClick(i)">Delete</button>
           </td>
         </tr>
       </ng-container>

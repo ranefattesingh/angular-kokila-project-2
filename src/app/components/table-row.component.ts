@@ -5,6 +5,7 @@ import { AttributeName } from '../models/attribute-name.model';
 import { LogicalOperator } from '../models/logical-operator';
 import MockConditionModel from '../mocks/mock';
 import { Condition } from '../models/condition.model';
+import { FormArray, FormControl, FormGroup } from '@angular/forms';
 
 @Component({
   selector: 'table-row',
@@ -12,54 +13,93 @@ import { Condition } from '../models/condition.model';
   styles: [`h1 { font-family: Lato; }`],
 })
 export class TableRowComponent {
-  LogicalOperators: LogicalOperator[] = [];
-  ArithmeticOperators: ArithmeticOperator[] = [];
-  AttributeNames: AttributeName[] = [];
-  AttributeValues: AttributeValue[] = [];
-  Conditions: Condition[] = [];
+  LogicalOperators = new FormArray([]);
+  ArithmeticOperators = new FormArray([]);
+  AttributeNames = new FormArray([]);
+  AttributeValues = new FormArray([]);
+  conditionForm = new FormGroup({
+    conditions: new FormArray([
+      new FormControl({
+        LogicalOperators: new FormArray([]),
+        ArithmeticOperators: new FormArray([]),
+        AttributeNames: new FormArray([]),
+        AttributeValues: new FormArray([]),
+      }),
+    ]),
+  });
 
   public ngOnInit() {
     let mock = new MockConditionModel();
-    this.LogicalOperators = mock.LogicalOperators;
-    this.ArithmeticOperators = mock.ArithmeticOperators;
-    this.AttributeNames = mock.AttributeNames;
-    this.AttributeValues = mock.AttributeValues;
+
+    mock.LogicalOperators.forEach((d) => {
+      this.LogicalOperators.push(
+        new FormControl({
+          ID: d.ID,
+          LogicalOperatorValue: d.LogicalOperatorValue,
+        })
+      );
+    });
+
+    mock.ArithmeticOperators.forEach((d) => {
+      this.ArithmeticOperators.push(
+        new FormControl({
+          ID: d.ID,
+          ArithmeticOperatorValue: d.ArithmeticOperatorValue,
+        })
+      );
+    });
+
+    mock.AttributeNames.forEach((d) => {
+      this.AttributeNames.push(
+        new FormControl({
+          ID: d.ID,
+          AttributeNameValue: d.AttributeNameValue,
+        })
+      );
+    });
+
+    mock.AttributeValues.forEach((d) => {
+      this.AttributeValues.push(
+        new FormControl({
+          ID: d.ID,
+          AttributeValueValue: d.AttributeValueValue,
+        })
+      );
+    });
 
     this.onAddConditionClick();
   }
 
   onAddConditionClick() {
-    console.log('clicked');
     let condition = this.defaultCondition();
-    condition.ID = this.Conditions.length + 1;
-    this.Conditions.push(condition);
+    condition.value.ID = this.conditionForm.controls.conditions.length + 1;
+    this.conditionForm.controls.conditions.push(condition);
   }
 
-  private defaultCondition(): Condition {
-    return {
+  private defaultCondition(): FormControl {
+    return new FormControl({
       ID: 0,
       LogicalOperators: this.LogicalOperators,
       ArithmeticOperators: this.ArithmeticOperators,
-      AttributeNames: this.AttributeNames,
+      AttributeNames: this.AttributeValues,
       AttributeValues: this.AttributeValues,
-    };
+    });
   }
 
-  onDeleteConditionClick(condition: Condition) {
-    let deleteIndex = this.findConditionIndex(condition.ID);
-    if (deleteIndex == -1) {
-      return;
-    }
-
-    this.Conditions.splice(deleteIndex, 1);
+  onDeleteConditionClick(index: number) {
+    this.conditionForm.controls.conditions.removeAt(index);
   }
 
   private findConditionIndex(id: number): number {
-    for (let i = 0; i < this.Conditions.length; i++) {
-      if (this.Conditions[i].ID === id) {
+    for (let i = 0; i < this.conditionForm.controls.conditions.length; i++) {
+      if (this.conditionForm.controls.conditions[i].ID === id) {
         return i;
       }
     }
     return -1;
+  }
+
+  getConditions(): FormArray {
+    return this.conditionForm.get('conditions') as FormArray;
   }
 }

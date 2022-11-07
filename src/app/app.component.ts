@@ -1,5 +1,4 @@
 import { Component, VERSION } from '@angular/core';
-import { TableRowComponent } from './components/table-row.component';
 
 @Component({
   selector: 'my-app',
